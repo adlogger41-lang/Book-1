@@ -1,0 +1,6 @@
+{
+  "name": "The Old Book",
+  "description": "An offline exercise notebook with antique leather styling, ruled paper, and smooth drawing tools.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

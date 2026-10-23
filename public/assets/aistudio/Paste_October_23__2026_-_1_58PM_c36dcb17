@@ -1,0 +1,1610 @@
+MASTER ANDROID APP DEVELOPMENT PROMPT — THE OLD BOOK
+
+YOUR ROLE
+
+Act as a senior Android application engineer, Android WebView specialist, frontend engineer, interaction designer, and software quality engineer.
+
+Your task is to transform my supplied HTML/CSS/JavaScript application into a complete, installable, offline-first Android application named The Old Book, optimized specifically for my Amazon Fire HD 10 tablet.
+
+I am providing the existing application source code at the end of this prompt. Treat it as the primary reference implementation. Preserve its appearance, features, interactions, and overall character as closely as possible.
+
+Do not merely explain how to build it. Create the actual Android project and all required source files.
+
+Do not return only a mockup, screenshot, concept, website, pseudocode, or a collection of disconnected code snippets.
+
+The finished deliverable must be a complete Android Studio-compatible project that can be compiled into an APK.
+
+---
+
+1. TARGET DEVICE AND COMPATIBILITY
+
+Primary target device:
+
+- Device: Amazon Fire HD 10, 11th generation, 2021 release.
+- Model identifier: KFTRWI.
+- Display size: 10.1 inches.
+- Display resolution: 1920 × 1200 pixels.
+- Aspect ratio: 16:10.
+- Processor: MediaTek MT8183, octa-core.
+- RAM: 3 GB or 4 GB, depending on device configuration.
+- Internal storage: 32 GB or 64 GB, depending on configuration.
+- Operating system: Fire OS 7, Android 9-based.
+- Minimum supported Android API: 28.
+- Preferred implementation: Kotlin Android application with a local WebView.
+- Internet connection: Not required for normal operation.
+
+Verify the model identifier and ensure that the project runs on Android API 28.
+
+Use a compile SDK and Gradle configuration compatible with the build environment, but do not set the minimum SDK above 28 without a compelling technical reason.
+
+The app must not depend on Google Play Services, Firebase, a remote server, a login, an API key, or an internet connection.
+
+Do not assume the tablet supports a Google Play Store installation. The final APK must be suitable for sideloading onto a compatible Fire tablet.
+
+2. ARCHITECTURE
+
+Use a native Android application written in Kotlin that hosts the supplied application inside a properly configured Android WebView.
+
+Keep the HTML, CSS, and JavaScript in local application assets, for example:
+
+app/src/main/assets/index.html
+
+You may separate CSS and JavaScript into their own local files if this improves maintainability, provided that the final application behaves correctly.
+
+The app must load the interface from local packaged assets, not a remote website.
+
+Recommended project structure:
+
+- settings.gradle or settings.gradle.kts
+- root build.gradle or build.gradle.kts
+- gradle.properties
+- app/build.gradle or app/build.gradle.kts
+- app/src/main/AndroidManifest.xml
+- app/src/main/java/.../MainActivity.kt
+- app/src/main/assets/index.html
+- app/src/main/assets/css/ if applicable
+- app/src/main/assets/js/ if applicable
+- required resources, themes, icons, and adaptive application assets
+- GitHub Actions workflow for building the APK
+- README.md with build and installation instructions
+
+Use a sensible package identifier such as com.dimi.theoldbook.
+
+Choose dependency versions that are compatible with the Android build environment and API 28.
+
+Do not introduce unnecessary frameworks, large libraries, or complicated architecture for a single-user offline notebook.
+
+The app must open directly into the notebook experience without displaying a browser address bar, browser navigation controls, website branding, or a blank loading screen.
+
+3. VISUAL DESIGN — PRESERVE THE ORIGINAL
+
+Reproduce the original HTML implementation as closely as possible.
+
+The app must look like a real, aged exercise notebook.
+
+Visual characteristics:
+
+- Dark brown wooden background surrounding the book.
+- Worn, cracked brown leather cover.
+- Subtle antique gold decorative borders.
+- Aged cream paper with realistic-looking texture.
+- Blue horizontal exercise-book lines.
+- A faded red vertical margin.
+- Dark blue handwritten-style or typewriter-like text.
+- Warm shadows, subtle paper depth, and realistic page edges.
+- Elegant, understated antique styling.
+
+Do not replace this design with a modern white productivity dashboard, generic Material Design screen, flat document editor, or AI-generated visual theme.
+
+Preserve the existing colors, typography, spacing, button styling, decorative details, layout, and visual hierarchy.
+
+The book should be the central focus of the interface.
+
+Use the actual 1920 × 1200 landscape tablet display effectively. Avoid oversized blank areas, excessively small text, clipped controls, or a book that is too narrow to write comfortably in.
+
+Support landscape and portrait orientation, but optimize the primary experience for landscape tablet use.
+
+Use Android density-independent dimensions and responsive CSS. Do not assume the CSS viewport equals the physical screen resolution.
+
+On the tablet, the settings panel should remain usable alongside the book whenever sufficient space is available.
+
+On narrower screens, allow the interface to adapt without breaking editing or drawing.
+
+4. FIRST-LAUNCH EXPERIENCE AND BOOK COVER
+
+On the first launch, display a welcome dialog asking the user to customize the notebook.
+
+Allow the user to choose:
+
+- Book title.
+- Subtitle or owner text.
+- Leather cover color.
+
+Provide a way to use default settings.
+
+After setup, display the closed leather cover with its decorative border and cracks.
+
+The cover must include the book title, subtitle, and an Open Your Book button.
+
+When the user opens the book, animate the cover rotating away around its spine, revealing the first paper page.
+
+Use a smooth, realistic three-dimensional rotation rather than abruptly hiding the cover.
+
+The opening animation must perform well on the target tablet.
+
+Persist the chosen cover settings locally so they remain after app restarts.
+
+5. BOOK PAGES AND PAGE NAVIGATION
+
+The notebook must behave as one continuous book containing an unlimited practical number of pages, subject to available storage and device performance.
+
+Required functionality:
+
+- Previous page.
+- Next page.
+- Swipe left and right to turn pages.
+- Page numbering.
+- Go to an existing page number.
+- Insert a blank page after the current page.
+- Duplicate the current page, including text and drawings.
+- Clear the current page.
+- Bookmark and unbookmark pages.
+- Display a list of bookmarked pages.
+- Navigate directly to a bookmarked page.
+- Remove bookmarks.
+- Preserve page contents when navigating away and back.
+
+Page numbering begins at 1.
+
+Page navigation must not create new pages accidentally when moving backward.
+
+Moving forward to the next page should create a blank page only when that page does not already exist.
+
+Inserting a page must shift subsequent page numbers consistently, without losing text, drawings, or valid bookmarks.
+
+Duplicating a page must copy both its text and its drawings.
+
+Do not render all pages simultaneously. Load the active page and maintain an efficient representation of the remaining pages.
+
+Implement a realistic page-turn animation that resembles a physical sheet folding and rotating around its edge.
+
+The animation must work with both forward and backward navigation. Prevent multiple overlapping page-turn animations.
+
+If a page contains long text, the page must scroll vertically without causing the entire app to scroll unexpectedly.
+
+6. TEXT WRITING EXPERIENCE
+
+The notebook must support real editable text on ruled paper.
+
+The writing area must behave like a normal exercise notebook:
+
+- Typed text appears on the page.
+- Text wraps naturally at the available writing width.
+- New lines align with the notebook's horizontal rules.
+- The text remains readable at normal tablet viewing distance.
+- The cursor and selection handles must work.
+- The user can edit existing text, select it, copy it, paste it, and delete it.
+- Hardware keyboards must work when connected.
+- Enter creates a new line.
+- Tab inserts spaces rather than moving focus away from the editor.
+
+The original design requires the user to tap the paper and write at the actual tapped location, not always at the beginning of the first line.
+
+Implement reliable caret placement for both existing text and empty portions of the page.
+
+If the user taps a blank area below existing text, position the caret at the appropriate line and approximate horizontal position. Create the required preceding blank lines or spaces without overwriting existing text.
+
+However, avoid inserting an excessive number of ordinary spaces that cause incorrect wrapping or damage previously written text.
+
+Use a robust editing strategy that preserves line alignment and normal text editing.
+
+Support a standard typing mode and a drawing mode.
+
+When drawing mode is active, typing must not accidentally modify the text.
+
+When typing mode is active, the drawing canvas must not intercept ordinary text-selection or caret-placement gestures.
+
+On the target tablet, support the software keyboard and a connected physical keyboard.
+
+Do not make a physical stylus mandatory.
+
+7. DRAWING TOOLS
+
+Provide a dedicated drawing mode with a toolbar.
+
+Required tools:
+
+1. Pen: freehand drawing following the user's finger or pointer.
+2. Straight line: drag from the starting point to the ending point.
+3. Circle or ellipse: drag to define the bounding rectangle.
+4. Triangle: drag to define its size.
+5. Quadrilateral: drag to define a rectangular quadrilateral.
+6. Eraser: erase strokes in the drawing layer.
+
+Provide:
+
+- Ink color selection.
+- Stroke thickness selection.
+- Undo.
+- Redo.
+- Clear drawings.
+- Done button to return to typing mode.
+
+Drawings must be positioned accurately relative to the paper.
+
+Use pointer or touch events and correctly handle the pointer lifecycle.
+
+For freehand pen strokes, capture enough intermediate points to create smooth lines.
+
+For geometric shapes, display an appropriate preview during dragging.
+
+The eraser must remove drawing content without deleting typed text or altering the paper background.
+
+Undo and redo must support both text changes and completed drawing actions.
+
+Preserve drawings when the user changes pages, resizes the screen, enters full-screen mode, or restarts the application.
+
+Do not use a drawing implementation that stores only a temporary canvas bitmap and loses its contents when the canvas is resized.
+
+Store drawing operations or stroke data and redraw them when required.
+
+Use efficient canvas scaling and coordinate transformations so drawings remain aligned with the paper at different screen sizes.
+
+Avoid excessive redraws and memory usage.
+
+8. PAPER CUSTOMIZATION
+
+Implement these paper styles:
+
+- Exercise-book ruled lines.
+- Graph paper.
+- Dotted paper.
+- Blank paper.
+
+Provide customization for:
+
+- Paper color.
+- Horizontal line color.
+- Vertical margin color.
+- Line spacing.
+
+Changing appearance must not delete existing notes or drawings.
+
+The horizontal writing rules must remain aligned with the writing baseline as closely as practical.
+
+The vertical margin should remain visible on ruled and graph paper where appropriate.
+
+Keep the aged-paper texture subtle enough that text remains readable.
+
+9. FULL-SCREEN WRITING MODE
+
+Implement a distraction-free full-screen mode.
+
+When activated:
+
+- Hide the application header.
+- Hide the settings panel.
+- Hide the bottom navigation bar.
+- Hide the ordinary toolbar unless it is needed for the active drawing task.
+- Expand the notebook writing surface to fill the available screen.
+- Remove unnecessary margins around the book.
+- Keep text editing and drawing functional.
+- Provide a clearly accessible exit control.
+
+Use Android immersive or appropriate system-bar handling where compatible.
+
+Do not permanently trap the user in full-screen mode.
+
+The system back action or visible exit control must allow the user to leave full-screen mode safely.
+
+Restore the previous interface when exiting.
+
+Ensure that resizing the book or canvas during full-screen transitions does not erase or shift existing drawings.
+
+10. LOCAL STORAGE AND DATA SAFETY
+
+This is an offline-first personal notebook. Data preservation is a critical requirement.
+
+Use persistent local storage.
+
+The application must save:
+
+- All page text.
+- All drawing operations.
+- Page numbers.
+- Book title and subtitle.
+- Cover color.
+- Paper color and style.
+- Rule and margin colors.
+- Line spacing.
+- Current page.
+- Bookmarks.
+- Any other persistent notebook settings.
+
+Save automatically after edits, with a short debounce for frequent typing.
+
+Also save when:
+
+- A page is changed.
+- The app is paused or backgrounded.
+- The activity is recreated.
+- Full-screen mode is entered or exited when relevant.
+- The app is closed through the normal Android lifecycle.
+
+Do not rely exclusively on an unload event or a delayed JavaScript timer to save important changes.
+
+Use an appropriate Android lifecycle strategy to preserve state.
+
+Keep the main saved notebook and a best-effort recovery copy, or implement another reliable recovery mechanism.
+
+Avoid corrupting the last valid saved notebook if an interrupted write occurs.
+
+If the storage quota is reached or a save fails, clearly notify the user.
+
+Do not display "Saved" when the latest change has not actually been persisted.
+
+Avoid unnecessary repeated full-book serialization during rapid typing.
+
+Use local storage or IndexedDB for notebook content as appropriate. If WebView storage is used, ensure that it persists across application restarts and is not accidentally cleared.
+
+The app must not transmit notebook content to external services.
+
+11. EXPORT, BACKUP, AND RESTORE
+
+Provide the following operations:
+
+A. Export text:
+Export all page text into a readable plain-text file. Clearly separate the pages and label their page numbers.
+
+B. Backup book:
+Export a JSON backup containing all page contents, drawings, bookmarks, and appearance settings.
+
+C. Restore backup:
+Allow the user to select a previously exported backup from device storage and restore it.
+
+Use Android's Storage Access Framework or another appropriate native file-selection mechanism so the user can save and open files through Android's document interface.
+
+Ensure that file export and restore work without requiring root access or broad storage permissions.
+
+Validate backup files before replacing existing notebook data.
+
+If the backup is invalid, report the error and preserve the current notebook.
+
+If practical, create a safety backup before replacing the current notebook with restored data.
+
+Do not silently overwrite the current notebook after an invalid or incomplete restore.
+
+Make sure backup files contain drawings as well as text.
+
+12. ANDROID WEBVIEW INTEGRATION
+
+Configure the WebView specifically for this offline application.
+
+Requirements:
+
+- Load the packaged local HTML asset.
+- Do not load a remote website.
+- Support JavaScript required by the supplied code.
+- Support local CSS, JavaScript, SVG, canvas, and fonts.
+- Support touch events, pointer events, text editing, and selection.
+- Preserve persistent local WebView storage.
+- Disable unwanted pinch zoom and browser-style page zoom.
+- Prevent long-press behavior from interfering with drawing, except where normal text selection is needed.
+- Avoid unwanted context menus and navigation.
+- Handle hardware keyboard input correctly.
+- Avoid external navigation unless explicitly needed for a supported action.
+- Do not enable file access or universal access from arbitrary file URLs unnecessarily.
+- Do not enable debugging in production builds.
+- Keep WebView content local and isolated.
+
+Use a safe, narrowly scoped integration between JavaScript and native Android code.
+
+Do not expose a broad JavaScript bridge to untrusted web content.
+
+If native file handling is required, implement a minimal bridge or a WebChromeClient-based file chooser with appropriate validation.
+
+Handle JavaScript dialogs such as confirmation prompts and alerts correctly.
+
+Ensure that HTML forms and hidden file inputs work as expected.
+
+13. ANDROID LIFECYCLE AND USER EXPERIENCE
+
+Implement:
+
+- Proper app launch.
+- Correct orientation and resizing behavior.
+- Android Back button handling.
+- Safe handling of app backgrounding and resuming.
+- Recovery after activity recreation.
+- Correct keyboard behavior.
+- No accidental exit that discards unsaved changes.
+- Appropriate application label and icon.
+- No unnecessary permissions.
+- No internet permission unless a clearly justified feature requires it.
+
+The app must remain usable in airplane mode.
+
+Do not display browser errors, missing remote resources, development-server messages, or debug information.
+
+Do not add advertisements, analytics, user accounts, AI services, subscriptions, or unnecessary features.
+
+14. AUDIT AND FIX THE SUPPLIED CODE
+
+The supplied HTML is the starting point, not an untouchable artifact.
+
+Inspect it carefully and fix bugs that could affect normal use.
+
+In particular, test and repair:
+
+- Caret placement on empty and populated lines.
+- Text wrapping and baseline alignment.
+- Drawing coordinate calculations.
+- Canvas resizing and redraw behavior.
+- Undo and redo history.
+- Page insertion and duplication.
+- Bookmark integrity when page numbers shift.
+- Page-turn animations.
+- Saving and recovery.
+- Backup export and restoration.
+- Full-screen transitions.
+- Software keyboard behavior.
+- Touch interaction conflicts between writing, drawing, and swiping.
+- Storage errors.
+- Behavior when the app is backgrounded or Android recreates the activity.
+
+Do not remove a feature just because it is inconvenient to implement.
+
+If a requested behavior cannot be reproduced exactly, implement the closest reliable solution and document the limitation.
+
+Do not replace the original antique design with a different design while fixing functionality.
+
+15. PERFORMANCE REQUIREMENTS
+
+The application must be optimized for a tablet with 3 GB of RAM.
+
+Avoid:
+
+- Rendering every page simultaneously.
+- Excessively large canvas bitmaps.
+- Unbounded undo history.
+- Repeated expensive operations on every keystroke.
+- Long-running main-thread tasks.
+- Memory leaks.
+- Unnecessary background processes.
+- Continuous animation when the page is idle.
+
+Use a reasonable cap for in-memory undo history while preserving reliable editing.
+
+Do not lose stored content when clearing in-memory history.
+
+The notebook should remain responsive during ordinary writing, drawing, page switching, and scrolling.
+
+Prioritize reliable behavior over unnecessary visual effects.
+
+16. AUTOMATED BUILD AND GITHUB ACTIONS
+
+Create a complete GitHub Actions workflow that builds the Android APK in the cloud.
+
+The workflow must:
+
+1. Check out the repository.
+2. Set up a compatible JDK.
+3. Configure the Android SDK and required build tools.
+4. Run the Gradle build.
+5. Stop with a clear failure if compilation fails.
+6. Produce a debug APK for testing and installation.
+7. Upload the APK as a downloadable GitHub Actions artifact.
+
+Use a workflow such as:
+
+.github/workflows/build-android.yml
+
+Use the correct Gradle wrapper configuration.
+
+Do not assume that a wrapper JAR, SDK component, secret, or dependency exists unless the project includes it or the build environment provides it.
+
+Do not require paid cloud services.
+
+Do not place credentials or signing keys in source code.
+
+A debug APK is sufficient for the initial personal-use build. If you also configure a release build, document signing requirements separately.
+
+17. REQUIRED TESTING
+
+Before declaring the application complete, test or explicitly verify the following:
+
+1. A fresh installation opens the welcome screen.
+2. The user can create and customize a notebook.
+3. The leather cover opens with an animation.
+4. The first page accepts text.
+5. Text can be entered at a tapped position.
+6. Text wraps and can be edited later.
+7. The pen draws smooth strokes.
+8. The line, circle, triangle, and quadrilateral tools work.
+9. The eraser affects drawings rather than text.
+10. Undo and redo work.
+11. A new page can be created and revisited.
+12. Inserting a page preserves later pages.
+13. Duplicating a page copies text and drawings.
+14. Bookmarks work after navigation and insertion.
+15. Paper customization works.
+16. Full-screen mode works and can be exited.
+17. Notes persist after force-closing and reopening the app.
+18. Exported text contains all page text.
+19. A JSON backup can be restored.
+20. Invalid backups do not destroy existing notes.
+21. The application works offline.
+22. The application runs on Android API 28.
+23. No essential buttons are hidden or unusable on the target tablet.
+24. Drawing coordinates remain correct after orientation or size changes.
+
+If you cannot execute a test, do not claim it passed. Clearly distinguish verified tests from unverified ones.
+
+18. DELIVERABLES
+
+Produce all of the following:
+
+1. Complete Android Studio project.
+2. Complete Kotlin source code.
+3. Complete HTML, CSS, and JavaScript assets.
+4. Android manifest and resources.
+5. Gradle build configuration and wrapper files.
+6. GitHub Actions build workflow.
+7. README with build, installation, backup, and restore instructions.
+8. A successful debug APK build, if the available environment supports compiling it.
+9. Clear instructions for obtaining the APK from the GitHub Actions artifact.
+10. A list of important bugs fixed and known limitations.
+
+Do not stop after creating the initial UI.
+
+Do not ask me to manually invent missing source files.
+
+Do not claim to have created a repository, committed code, tested the app, or generated an APK unless you actually performed that action.
+
+If you have access to the existing GitHub repository and are authorized to edit it, work within that repository. Otherwise, generate the complete project files and explain how I can place them in my repository.
+
+19. DEVELOPMENT WORKFLOW
+
+Proceed in this order:
+
+Phase 1: Inspect the supplied source code and identify technical risks.
+
+Phase 2: Create the Android project and package the application locally.
+
+Phase 3: Implement and verify all notebook functionality.
+
+Phase 4: Add native Android integration, backup/restore, and lifecycle handling.
+
+Phase 5: Configure the GitHub Actions APK build.
+
+Phase 6: Build, test, fix compilation errors, and validate the final output.
+
+At each phase, make real progress in the project instead of merely describing what should be done.
+
+When the project is complete, report:
+
+- Files created.
+- Features implemented.
+- Bugs fixed.
+- Build result.
+- APK location, if successfully generated.
+- Tests actually performed.
+- Any remaining limitations.
+
+20. SOURCE CODE
+
+The complete existing HTML/CSS/JavaScript application follows this prompt.
+
+Use the supplied code as the original implementation.
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#241910">
+<title>The Old Book</title>
+<style>
+:root{
+  --leather:#493022;--paper:#f4ebd5;--rule:#91b6d0;
+  --margin:#c96e68;--lh:30px;--ink:#253e59;
+  --brass:#b18a55;--wood:#2b2018;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{
+  background:
+    radial-gradient(ellipse at 50% 35%,#66503a 0%,#38291e 55%,#1b130e 100%);
+  color:#e7d8bd;font-family:Georgia,"Times New Roman",serif;
+}
+button,input,select{font:inherit}
+button{
+  cursor:pointer;color:#e7d8bd;background:linear-gradient(#4c3828,#35251a);
+  border:1px solid #80613e;border-radius:2px;padding:7px 10px;
+  box-shadow:inset 0 1px #ffffff0a;
+}
+button:hover{background:linear-gradient(#62472e,#443020)}
+button:active{transform:translateY(1px)}
+button:disabled{opacity:.35;cursor:default}
+button.active{background:#80603b;border-color:#c4a16d;color:#fff0d4}
+input,select{accent-color:#a17b49}
+header{
+  height:55px;display:flex;align-items:center;gap:12px;
+  padding:7px 15px;background:linear-gradient(#2d2017,#21160f);
+  border-bottom:2px solid #6b4b2e;
+  box-shadow:0 3px 9px #0003;
+}
+header h1{font-size:17px;font-weight:normal;margin:0;letter-spacing:.3px}
+header small{color:#bba486;font-size:11px;font-style:italic}
+#status{margin-left:auto;color:#c9b79d;font:11px system-ui}
+.workspace{
+  height:calc(100dvh - 103px);display:flex;gap:14px;padding:12px;
+}
+.settings{
+  width:180px;flex-shrink:0;overflow:auto;padding:12px;
+  background:linear-gradient(120deg,#30231a,#251a13);
+  border:1px solid #60462f;border-radius:2px;
+  box-shadow:inset 0 0 18px #0002;
+}
+.settings h2{
+  color:#c8a675;font:10px Georgia,serif;letter-spacing:2px;
+  text-transform:uppercase;border-bottom:1px solid #6c5035;padding-bottom:8px;
+}
+.field{margin:12px 0}
+.field label{
+  display:block;margin-bottom:5px;color:#c6b398;
+  font:11px system-ui;
+}
+.field input:not([type=color]):not([type=range]),.field select{
+  width:100%;padding:7px;background:#1e1712;
+  border:1px solid #69513a;border-radius:2px;color:#eee0ca;
+}
+.field input[type=color]{width:100%;height:30px}
+.field input[type=range]{width:100%}
+.stage{
+  flex:1;min-width:0;min-height:0;position:relative;
+  display:flex;align-items:center;justify-content:center;perspective:1800px;
+}
+.book{
+  height:100%;max-width:100%;aspect-ratio:.72;position:relative;
+  filter:drop-shadow(0 15px 22px #0009);isolation:isolate;
+}
+.book::before{
+  content:"";position:absolute;z-index:-2;inset:4px -6px -4px 4px;
+  border-radius:4px 7px 7px 4px;
+  background:repeating-linear-gradient(0deg,#b9a17c 0 1px,#e6d5b2 1px 3px,#ad9672 3px 4px);
+}
+.paper{
+  position:absolute;inset:0;overflow:hidden;border-radius:3px 7px 7px 3px;
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(ellipse at 15% 12%,#fff9e5,transparent 60%),
+    repeating-linear-gradient(3deg,#9d825310 0 1px,transparent 1px 5px);
+  box-shadow:inset 8px 0 13px #60452222,inset -4px 0 8px #60452222;
+  color:#29251f;
+}
+.margin{
+  position:absolute;z-index:3;top:0;bottom:0;left:31px;width:1px;
+  background:var(--margin);pointer-events:none;
+}
+.writing{
+  position:absolute;z-index:2;inset:0;padding:30px 23px 36px 48px;
+  overflow:auto;outline:none;color:var(--ink);
+  font:17px/var(--lh) "Courier New",monospace;
+  white-space:pre-wrap;overflow-wrap:anywhere;caret-color:#943f36;
+  tab-size:4;
+  background-image:repeating-linear-gradient(
+    to bottom,transparent 0,transparent calc(var(--lh) - 1px),
+    var(--rule) calc(var(--lh) - 1px),var(--rule) var(--lh));
+  background-position:0 1px;touch-action:pan-y;
+}
+.writing:empty::before{
+  content:"Tap anywhere on the paper to begin writing…";
+  color:#a69a84;font-style:italic;pointer-events:none;
+}
+.page-number{
+  position:absolute;right:18px;bottom:10px;z-index:4;
+  color:#9c8968;font:10px system-ui;pointer-events:none;
+}
+canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  z-index:5;pointer-events:none;touch-action:none;
+}
+.cover{
+  position:absolute;inset:0;z-index:10;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  transform-origin:left center;
+  transition:transform 1s cubic-bezier(.55,.08,.28,1),opacity .8s;
+  border-radius:5px 8px 8px 5px;
+  background:
+    radial-gradient(ellipse at 18% 14%,#ad865126,transparent 38%),
+    radial-gradient(ellipse at 85% 80%,#0006,transparent 40%),
+    repeating-linear-gradient(12deg,transparent 0 13px,#00000009 14px,#ffffff04 15px,transparent 17px),
+    linear-gradient(135deg,#63432c,var(--leather) 40%,#2c1c12);
+  box-shadow:inset 0 0 0 7px #21140e,inset 0 0 0 9px #8b6540,
+             inset 0 0 0 12px #302015,inset 0 0 25px #000b;
+}
+.cover:before{
+  content:"";position:absolute;inset:17px;border:1px solid #b78b52;
+  pointer-events:none;box-shadow:inset 0 0 0 3px #2a1a10;
+}
+.cracks{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.5}
+.cover-content{position:relative;z-index:2;width:78%;text-align:center}
+.cover-kicker{
+  color:#c7a16d;font:10px system-ui;letter-spacing:3px;text-transform:uppercase;
+}
+.cover h2{
+  margin:24px 0 14px;color:#d7b77e;font-size:clamp(25px,4vw,44px);
+  line-height:1.15;font-weight:normal;overflow-wrap:anywhere;
+  text-shadow:0 2px 2px #000;
+}
+.cover-rule{width:65%;margin:auto;border-top:1px solid #bd945a}
+.cover-subtitle{margin-top:20px;color:#c1a47a;font-style:italic}
+.cover-owner{
+  margin-top:42px;color:#b18b5b;font:10px system-ui;
+  letter-spacing:2px;text-transform:uppercase;
+}
+.cover.opened{transform:rotateY(-112deg);opacity:0;pointer-events:none}
+.turn-layer{
+  position:absolute;inset:0;z-index:8;display:none;
+  pointer-events:none;perspective:1800px;overflow:visible;
+}
+.turn-layer.active{display:block}
+.turn-sheet{
+  position:absolute;inset:0;transform-origin:left center;
+  background:linear-gradient(90deg,#b8a17b,#f5ebd5 8%,#fff7e5 45%,#d5c19d);
+  box-shadow:inset -14px 0 18px #49352233,12px 0 18px #0002;
+  border-radius:3px 9px 12px 3px;overflow:hidden;
+}
+.turn-sheet:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 40%,#fff9 48%,#6e563633 55%,transparent 70%);
+}
+.turn-layer.forward .turn-sheet{animation:curlForward .82s cubic-bezier(.45,.02,.35,1) forwards}
+.turn-layer.backward .turn-sheet{
+  transform-origin:right center;
+  animation:curlBackward .82s cubic-bezier(.45,.02,.35,1) forwards;
+}
+@keyframes curlForward{
+  0%{transform:rotateY(0) skewY(0);filter:brightness(1)}
+  22%{transform:rotateY(-24deg) skewY(-1deg);filter:brightness(.92)}
+  55%{transform:rotateY(-105deg) skewY(2deg);filter:brightness(.72)}
+  100%{transform:rotateY(-180deg) skewY(0);filter:brightness(1)}
+}
+@keyframes curlBackward{
+  0%{transform:rotateY(180deg);filter:brightness(.75)}
+  35%{transform:rotateY(105deg) skewY(-2deg)}
+  75%{transform:rotateY(24deg) skewY(1deg)}
+  100%{transform:rotateY(0);filter:brightness(1)}
+}
+.toolbar{
+  position:absolute;z-index:15;top:7px;left:50%;transform:translateX(-50%);
+  max-width:98%;display:flex;flex-wrap:wrap;justify-content:center;gap:4px;
+  padding:5px;background:#2b2019ed;border:1px solid #795637;border-radius:3px;
+}
+.toolbar button{padding:6px 8px;font:11px system-ui}
+.toolbar button.active{background:#80603b}
+.toolbar input[type=color]{width:28px;height:27px;padding:1px}
+.toolbar input[type=range]{width:65px}
+.bottom{
+  min-height:42px;display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;gap:5px;padding:4px 7px;
+}
+.bottom button{padding:6px 8px;font-size:12px}
+#pageCount{min-width:83px;text-align:center;color:#d0bda1;font:11px system-ui}
+.help{text-align:center;padding:0 8px;color:#bba88e;font:10px system-ui}
+.overlay{
+  position:fixed;inset:0;z-index:60;display:grid;place-items:center;
+  padding:18px;background:#100b09d9;backdrop-filter:blur(2px);
+}
+.dialog{
+  width:min(430px,100%);max-height:85dvh;overflow:auto;padding:22px;
+  background:linear-gradient(145deg,#3a2a1e,#281c14);
+  border:1px solid #926a41;border-radius:3px;
+  box-shadow:0 14px 45px #0008,inset 0 0 0 4px #21170f;
+}
+.dialog h2{
+  color:#d8b780;font-weight:normal;margin-top:0;
+  border-bottom:1px solid #705033;padding-bottom:10px;
+}
+.dialog p{color:#c5b194;font:12px/1.6 system-ui}
+.dialog label{display:block;margin:12px 0 5px;color:#d2bea0;font:12px system-ui}
+.dialog input:not([type=color]){
+  width:100%;padding:8px;color:#eee0ca;background:#1e1712;
+  border:1px solid #69513a;border-radius:2px;
+}
+.dialog input[type=color]{width:100%;height:30px}
+.dialog-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-top:18px}
+.bookmark-list{display:grid;gap:7px;margin-top:12px}
+.bookmark-entry{
+  display:flex;align-items:center;gap:8px;padding:8px;
+  border-bottom:1px solid #6b4d32;background:#281c14;
+}
+.bookmark-entry button:first-child{flex:1;text-align:left}
+.bookmark-entry .remove-bookmark{padding:5px 8px}
+.notice{font:11px/1.5 system-ui;color:#c4ad8d;margin-top:10px}
+[hidden]{display:none!important}
+body.focus-mode header,body.focus-mode .settings,body.focus-mode .bottom,
+body.focus-mode .help,body.focus-mode .toolbar{display:none!important}
+body.focus-mode .workspace{height:100dvh;padding:0;gap:0}
+body.focus-mode .stage{width:100%;height:100%;padding:0}
+body.focus-mode .book{
+  height:100%;width:100%;max-width:100%;aspect-ratio:auto;filter:none;
+}
+body.focus-mode .paper{border-radius:0}
+body.focus-mode .book:before{display:none}
+body.focus-mode .writing{padding-top:35px}
+#exitFocus{
+  display:none;position:fixed;z-index:50;top:10px;right:10px;
+  background:#30231acc;border:1px solid #926a41;
+}
+body.focus-mode #exitFocus{display:block}
+@media(max-width:700px){
+  .workspace{padding:5px;gap:0}.settings{display:none}
+  .book{height:100%}header{padding:7px 9px;gap:7px}
+  header h1{font-size:15px}header small{font-size:10px}
+  #status{font-size:10px}
+  .toolbar{gap:3px;max-width:99%}.toolbar button{padding:6px}
+  .bottom{gap:4px;padding:3px}
+  .bottom button{padding:6px;font-size:11px}
+}
+@media(orientation:landscape) and (max-height:520px){
+  .workspace{height:calc(100dvh - 95px)}.settings{width:140px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div style="font-size:23px;color:#d8b887">✦</div>
+  <div><h1 id="topTitle">The Old Book</h1><small>One book · Endless pages</small></div>
+  <div id="status" role="status" aria-live="polite">● Saved locally</div>
+  <button id="settingsBtn" title="Customize book">⚙</button>
+  <button id="fullscreenBtn" title="Distraction-free full screen">⛶ Full screen</button>
+</header>
+
+<main class="workspace">
+  <aside class="settings">
+    <h2>Book details</h2>
+    <div class="field"><label for="bookTitle">Cover title</label><input id="bookTitle" value="The Old Book"></div>
+    <div class="field"><label for="owner">Subtitle / owner</label><input id="owner" value="Notes, ideas & sketches"></div>
+    <div class="field"><label for="leather">Leather color</label><input id="leather" type="color" value="#493022"></div>
+    <div class="field"><label for="paperColor">Paper color</label><input id="paperColor" type="color" value="#f4ebd5"></div>
+    <div class="field"><label for="ruleColor">Line color</label><input id="ruleColor" type="color" value="#91b6d0"></div>
+    <div class="field"><label for="marginColor">Margin color</label><input id="marginColor" type="color" value="#c96e68"></div>
+    <div class="field"><label for="spacing">Line spacing</label><input id="spacing" type="range" min="22" max="40" value="30"></div>
+    <div class="field"><label for="paperStyle">Paper style</label>
+      <select id="paperStyle">
+        <option value="ruled">Exercise-book lines</option>
+        <option value="graph">Graph paper</option>
+        <option value="dotted">Dotted paper</option>
+        <option value="blank">Blank paper</option>
+      </select>
+    </div>
+    <button id="exportText">Export text</button>
+    <button id="backup">Backup book</button>
+    <button id="restore">Restore backup</button>
+    <input id="restoreFile" type="file" accept=".json" hidden>
+    <p class="notice">Your notes are stored on this device. Export backups regularly for safekeeping.</p>
+  </aside>
+
+  <section class="stage">
+    <div class="book" id="book">
+      <div class="paper" id="paper">
+        <div class="margin"></div>
+        <div id="writing" class="writing" contenteditable="true" spellcheck="false" aria-label="Exercise book page"></div>
+        <canvas id="drawing"></canvas>
+        <div class="page-number" id="pageNumber">1</div>
+        <div class="turn-layer" id="turnLayer"><div class="turn-sheet" id="turnSheet"></div></div>
+      </div>
+      <div class="cover" id="cover">
+        <svg class="cracks" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">
+          <g fill="none" stroke-linecap="round">
+            <path d="M20 90 L39 101 L34 119 L53 133 L49 154 L69 168" stroke="#1b100a" stroke-width="2" opacity=".7"/>
+            <path d="M21 89 L40 100 L35 118 L54 132" stroke="#c6a174" stroke-width=".8"/>
+            <path d="M350 65 L333 84 L340 99 L320 113 L326 132" stroke="#17100a" stroke-width="2" opacity=".6"/>
+            <path d="M349 65 L332 85 L339 100 L319 114" stroke="#b28a59" stroke-width=".8"/>
+            <path d="M50 400 L68 414 L61 434 L82 445 L79 463" stroke="#20130c" stroke-width="1.7" opacity=".6"/>
+            <path d="M353 350 L335 364 L344 381 L326 399 L331 414" stroke="#1d120b" stroke-width="2" opacity=".65"/>
+            <path d="M351 351 L334 365 L343 382" stroke="#c19a6b" stroke-width=".7"/>
+            <path d="M170 20 L180 37 L171 49 L188 62" stroke="#21150e" stroke-width="1.4" opacity=".5"/>
+            <path d="M285 515 L273 531 L282 544 L265 559" stroke="#21150e" stroke-width="1.5" opacity=".6"/>
+          </g>
+        </svg>
+        <div class="cover-content">
+          <div class="cover-kicker">Personal exercise book</div>
+          <h2 id="coverTitle">The Old Book</h2>
+          <div class="cover-rule"></div>
+          <div class="cover-subtitle" id="coverSubtitle">Notes, ideas & sketches</div>
+          <div class="cover-owner">A BOOK OF YOUR OWN</div>
+          <button id="openBook" style="margin-top:25px">Open your book →</button>
+        </div>
+      </div>
+    </div>
+    <div class="toolbar" id="toolbar" hidden>
+      <button data-tool="pen" class="active">✎ Pen</button>
+      <button data-tool="line">／ Line</button>
+      <button data-tool="circle">◯ Circle</button>
+      <button data-tool="triangle">△ Triangle</button>
+      <button data-tool="quad">▱ Quadrilateral</button>
+      <button data-tool="eraser">⌫ Eraser</button>
+      <input id="drawColor" type="color" value="#243f61" title="Ink color">
+      <input id="drawSize" type="range" min="1" max="14" value="3" title="Stroke thickness">
+      <button id="undo" title="Undo text or drawing">↶ Undo</button>
+      <button id="redo" title="Redo text or drawing">↷ Redo</button>
+      <button id="clear" title="Clear drawings only">Clear drawings</button>
+      <button id="done">Done</button>
+    </div>
+  </section>
+</main>
+
+<div class="bottom">
+  <button id="typeMode" class="active">✎ Type</button>
+  <button id="drawMode">⌁ Draw</button>
+  <button id="prev" aria-label="Previous page">‹</button>
+  <span id="pageCount">Page 1</span>
+  <button id="next" aria-label="Next page">›</button>
+  <button id="jumpBtn">↗ Go to page</button>
+  <button id="bookmarkBtn">☆ Bookmark</button>
+  <button id="bookmarksBtn">⚑ Bookmarks</button>
+  <button id="insertPage">＋ Insert</button>
+  <button id="duplicatePage">▣ Duplicate</button>
+  <button id="clearPage">Clear page</button>
+</div>
+<div class="help" id="help">Tap anywhere on a line to write · Changes save automatically · Turn pages with arrows</div>
+<button id="exitFocus">✕ Exit full screen</button>
+
+<div class="overlay" id="welcome">
+  <div class="dialog">
+    <h2>Make this book yours</h2>
+    <p>Give your giant exercise book a name and choose its cover.</p>
+    <label for="welcomeTitle">Book title</label><input id="welcomeTitle" value="The Old Book">
+    <label for="welcomeOwner">Subtitle / owner</label><input id="welcomeOwner" value="Notes, ideas & sketches">
+    <label for="welcomeLeather">Leather color</label><input id="welcomeLeather" type="color" value="#493022">
+    <div class="dialog-actions"><button id="skipWelcome">Use defaults</button><button id="createBook">Create my book</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="customize" hidden>
+  <div class="dialog">
+    <h2>Customize the book</h2><p>Change the cover and paper appearance without removing your notes.</p>
+    <label for="modalTitle">Cover title</label><input id="modalTitle">
+    <label for="modalOwner">Subtitle / owner</label><input id="modalOwner">
+    <label for="modalLeather">Leather color</label><input id="modalLeather" type="color">
+    <label for="modalPaper">Paper color</label><input id="modalPaper" type="color">
+    <label for="modalRule">Line color</label><input id="modalRule" type="color">
+    <div class="dialog-actions"><button id="closeCustomize">Close</button><button id="applyCustomize">Apply</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="jumpDialog" hidden>
+  <form class="dialog" id="jumpForm">
+    <h2>Find a page</h2>
+    <p>Enter the number of a page that already exists in this book.</p>
+    <label for="jumpNumber">Page number</label>
+    <input id="jumpNumber" type="number" min="1" step="1" required inputmode="numeric" placeholder="e.g. 12">
+    <p id="jumpError" class="notice" role="alert" hidden>Page does not exist.</p>
+    <div class="dialog-actions"><button type="button" id="cancelJump">Cancel</button><button type="submit">Open page</button></div>
+  </form>
+</div>
+
+<div class="overlay" id="bookmarksDialog" hidden>
+  <div class="dialog">
+    <h2>Bookmarked pages</h2>
+    <p>Pages you marked for quick return.</p>
+    <div id="bookmarkList" class="bookmark-list"></div>
+    <p id="noBookmarks" class="notice" hidden>You have not bookmarked any pages yet.</p>
+    <div class="dialog-actions"><button id="closeBookmarks">Close</button></div>
+  </div>
+</div>
+
+<script>
+(() => {
+"use strict";
+const $=id=>document.getElementById(id);
+const KEY="theOldBookPrototype_v2";
+const RECOVERY_KEY=KEY+"_recovery";
+const defaults={
+  title:"The Old Book",owner:"Notes, ideas & sketches",
+  leather:"#493022",paper:"#f4ebd5",rule:"#91b6d0",
+  margin:"#c96e68",spacing:30,paperStyle:"ruled",
+  currentPage:1,mode:"type",pages:{"1":{html:"",drawings:[]}},bookmarks:[]
+};
+
+let book=JSON.parse(JSON.stringify(defaults));
+let currentPage=1,mode="type",tool="pen";
+let drawingNow=false,activePointer=null,start=null;
+let pageAnimating=false,saveTimer=null,focusFallback=false;
+let historyByPage={},historyTimer=null,restoringHistory=false;
+let touchX=null,touchY=null;
+
+const writing=$("writing"),canvas=$("drawing"),ctx=canvas.getContext("2d"),paper=$("paper");
+
+function normalizePage(p){
+  if(!p||typeof p!=="object")return {html:"",drawings:[]};
+  return {html:typeof p.html==="string"?p.html:"",drawings:Array.isArray(p.drawings)?p.drawings:[]};
+}
+function hasPage(n){return Object.prototype.hasOwnProperty.call(book.pages,String(n))}
+function page(){
+  if(!hasPage(currentPage))book.pages[currentPage]={html:"",drawings:[]};
+  book.pages[currentPage]=normalizePage(book.pages[currentPage]);
+  return book.pages[currentPage];
+}
+function setStatus(s){$("status").textContent="● "+s}
+function notify(s){setStatus(s);setTimeout(()=>setStatus("Saved locally"),2200)}
+function clone(value){return JSON.parse(JSON.stringify(value))}
+function snapshot(){return {html:writing.innerHTML,drawings:clone(page().drawings)}}
+
+function historyFor(n=currentPage){
+  const key=String(n);
+  if(!historyByPage[key]){
+    const p=hasPage(n)?normalizePage(book.pages[key]):{html:"",drawings:[]};
+    historyByPage[key]={items:[{html:p.html,drawings:clone(p.drawings)}],index:0};
+  }
+  return historyByPage[key];
+}
+function updateHistoryButtons(){
+  const h=historyFor();
+  $("undo").disabled=h.index<=0;
+  $("redo").disabled=h.index>=h.items.length-1;
+}
+function commitHistory(){
+  if(restoringHistory)return;
+  const h=historyFor(),s=snapshot(),last=h.items[h.index];
+  if(last&&last.html===s.html&&JSON.stringify(last.drawings)===JSON.stringify(s.drawings)){
+    updateHistoryButtons();return;
+  }
+  h.items=h.items.slice(0,h.index+1);
+  h.items.push(s);
+  if(h.items.length>80)h.items.shift();
+  h.index=h.items.length-1;
+  updateHistoryButtons();
+}
+function scheduleHistory(){
+  clearTimeout(historyTimer);
+  historyTimer=setTimeout(()=>commitHistory(),300);
+}
+function restoreHistorySnapshot(s){
+  restoringHistory=true;
+  page().html=s.html;
+  page().drawings=clone(s.drawings);
+  writing.innerHTML=s.html;
+  redraw();
+  restoringHistory=false;
+  save();
+}
+function undo(){
+  clearTimeout(historyTimer);
+  commitHistory();
+  const h=historyFor();
+  if(h.index<=0)return;
+  h.index--;restoreHistorySnapshot(h.items[h.index]);updateHistoryButtons();
+}
+function redo(){
+  clearTimeout(historyTimer);
+  const h=historyFor();
+  if(h.index>=h.items.length-1)return;
+  h.index++;restoreHistorySnapshot(h.items[h.index]);updateHistoryButtons();
+}
+
+/* Debounced saving, plus a separate best-effort recovery copy. */
+function saveNow(){
+  clearTimeout(saveTimer);
+  try{
+    if(hasPage(currentPage))book.pages[currentPage].html=writing.innerHTML;
+    book.currentPage=currentPage;book.mode=mode;
+    const serialized=JSON.stringify(book);
+    try{localStorage.setItem(RECOVERY_KEY,serialized)}catch(recoveryError){}
+    localStorage.setItem(KEY,serialized);
+    setStatus("Saved locally");
+    checkStorage();
+    return true;
+  }catch(e){
+    setStatus("Storage full — export a backup");
+    warnStorage();
+    return false;
+  }
+}
+function save(){
+  clearTimeout(saveTimer);
+  setStatus("Saving…");
+  saveTimer=setTimeout(saveNow,350);
+}
+let lastStorageWarning=0;
+function warnStorage(){
+  const now=Date.now();
+  if(now-lastStorageWarning<12000)return;
+  lastStorageWarning=now;
+  setTimeout(()=>{
+    alert("The book may be running out of browser storage. Export a backup soon. If saving fails, some recent changes may not be preserved.");
+  },0);
+}
+async function checkStorage(){
+  try{
+    if(!navigator.storage||!navigator.storage.estimate)return;
+    const e=await navigator.storage.estimate();
+    if(e.quota&&e.usage/e.quota>.85){
+      setStatus("Storage nearly full");
+      warnStorage();
+    }
+  }catch(_){}
+}
+function flushBeforeLeaving(){
+  clearTimeout(saveTimer);
+  try{
+    if(hasPage(currentPage))book.pages[currentPage].html=writing.innerHTML;
+    book.currentPage=currentPage;book.mode=mode;
+    const raw=JSON.stringify(book);
+    try{localStorage.setItem(RECOVERY_KEY,raw)}catch(_){}
+    localStorage.setItem(KEY,raw);
+  }catch(_){setStatus("Save failed — export a backup")}
+}
+
+function applyAppearance(){
+  const root=document.documentElement;
+  root.style.setProperty("--leather",book.leather);
+  root.style.setProperty("--paper",book.paper);
+  root.style.setProperty("--rule",book.rule);
+  root.style.setProperty("--margin",book.margin);
+  root.style.setProperty("--lh",book.spacing+"px");
+  if(book.paperStyle==="graph"){
+    writing.style.backgroundImage="linear-gradient(to right,var(--rule) 1px,transparent 1px),linear-gradient(to bottom,var(--rule) 1px,transparent 1px)";
+    writing.style.backgroundSize="22px 22px";
+  }else if(book.paperStyle==="dotted"){
+    writing.style.backgroundImage="radial-gradient(circle,var(--rule) 1px,transparent 1.2px)";
+    writing.style.backgroundSize="16px 16px";
+  }else if(book.paperStyle==="blank"){
+    writing.style.backgroundImage="none";writing.style.backgroundSize="auto";
+  }else{
+    writing.style.backgroundImage="repeating-linear-gradient(to bottom,transparent 0,transparent calc(var(--lh) - 1px),var(--rule) calc(var(--lh) - 1px),var(--rule) var(--lh))";
+    writing.style.backgroundSize="auto";
+  }
+}
+function updateCover(){
+  const title=book.title||"The Old Book";
+  $("topTitle").textContent=title;$("coverTitle").textContent=title;
+  $("coverSubtitle").textContent=book.owner||"A book of your own";
+}
+function updatePageLabels(){
+  $("pageNumber").textContent=currentPage;
+  const nums=Object.keys(book.pages).map(Number).filter(Number.isFinite);
+  $("pageCount").textContent="Page "+currentPage+" · "+nums.length+" saved";
+  $("prev").disabled=pageAnimating||currentPage<=1;
+  $("next").disabled=pageAnimating;
+}
+function loadPage(){
+  book.pages[currentPage]=normalizePage(book.pages[currentPage]);
+  writing.innerHTML=page().html||"";
+  writing.scrollTop=0;
+  updatePageLabels();resizeCanvas();redraw();
+  historyFor(currentPage);updateHistoryButtons();save();
+}
+function resizeCanvas(){
+  const rect=paper.getBoundingClientRect();
+  if(!rect.width||!rect.height)return;
+  const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);
+  canvas.style.width=rect.width+"px";canvas.style.height=rect.height+"px";
+  ctx.setTransform(dpr,0,0,dpr,0,0);redraw();
+}
+function shapes(){return page().drawings}
+function drawShape(s){
+  ctx.save();ctx.lineWidth=s.size||3;ctx.lineCap="round";ctx.lineJoin="round";
+  ctx.strokeStyle=s.color||"#243f61";
+  if(s.tool==="eraser")ctx.globalCompositeOperation="destination-out";
+  ctx.beginPath();
+  if(s.tool==="pen"||s.tool==="eraser"){
+    if(!s.points?.length){ctx.restore();return}
+    ctx.moveTo(s.points[0].x,s.points[0].y);
+    for(let i=1;i<s.points.length;i++)ctx.lineTo(s.points[i].x,s.points[i].y);
+    if(s.points.length===1)ctx.lineTo(s.points[0].x+.1,s.points[0].y+.1);
+  }else{
+    const a=s.start,b=s.end;
+    if(!a||!b){ctx.restore();return}
+    if(s.tool==="line"){ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y)}
+    else if(s.tool==="circle")ctx.ellipse((a.x+b.x)/2,(a.y+b.y)/2,Math.abs(b.x-a.x)/2,Math.abs(b.y-a.y)/2,0,0,Math.PI*2);
+    else if(s.tool==="triangle"){ctx.moveTo((a.x+b.x)/2,a.y);ctx.lineTo(b.x,b.y);ctx.lineTo(a.x,b.y);ctx.closePath()}
+    else if(s.tool==="quad")ctx.rect(Math.min(a.x,b.x),Math.min(a.y,b.y),Math.abs(b.x-a.x),Math.abs(b.y-a.y));
+  }
+  ctx.stroke();ctx.restore();
+}
+function redraw(){
+  if(!ctx||!canvas.width)return;
+  const r=paper.getBoundingClientRect(),dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,r.width,r.height);
+  shapes().forEach(drawShape);
+}
+
+/* Place the caret at the actual tapped position where supported. */
+function getCaretAtPoint(x,y){
+  if(document.caretPositionFromPoint){
+    const p=document.caretPositionFromPoint(x,y);
+    if(p){const range=document.createRange();range.setStart(p.offsetNode,p.offset);range.collapse(true);return range}
+  }
+  if(document.caretRangeFromPoint)return document.caretRangeFromPoint(x,y);
+  return null;
+}
+function setCaret(range){
+  const sel=window.getSelection();if(!sel)return;sel.removeAllRanges();sel.addRange(range);
+}
+function rangeTouchesText(range){
+  if(!range)return false;
+  const node=range.startContainer;
+  return node.nodeType===Node.TEXT_NODE&&node.textContent.length>0;
+}
+function ensureBlankLineCaret(clientX,clientY){
+  const r=paper.getBoundingClientRect(),lh=Number(book.spacing)||30,top=30;
+  const targetLine=Math.max(0,Math.floor((clientY-r.top-top)/lh));
+  const contentX=Math.max(0,clientX-r.left-48),charWidth=9.9;
+  const targetColumn=Math.max(0,Math.floor(contentX/charWidth));
+  let lines=writing.innerText.replace(/\r/g,"").split("\n");
+  while(lines.length<=targetLine)lines.push("");
+  if(lines[targetLine].length<targetColumn)lines[targetLine]+=" ".repeat(targetColumn-lines[targetLine].length);
+  writing.textContent=lines.join("\n");
+  const walker=document.createTreeWalker(writing,NodeFilter.SHOW_TEXT);
+  let node,offset=0;
+  const wanted=lines.slice(0,targetLine).join("\n").length+(targetLine>0?1:0)+Math.min(targetColumn,lines[targetLine].length);
+  while((node=walker.nextNode())){
+    const len=node.textContent.length;
+    if(wanted<=offset+len){
+      const range=document.createRange();range.setStart(node,Math.min(wanted-offset,len));range.collapse(true);
+      setCaret(range);scheduleHistory();save();return;
+    }
+    offset+=len;
+  }
+  const range=document.createRange();range.selectNodeContents(writing);range.collapse(false);setCaret(range);scheduleHistory();save();
+}
+writing.addEventListener("pointerdown",e=>{
+  if(mode!=="type"||pageAnimating)return;
+  if(e.pointerType==="mouse"&&e.button!==0)return;
+  const nativeRange=getCaretAtPoint(e.clientX,e.clientY);
+  if(nativeRange&&rangeTouchesText(nativeRange))return;
+  e.preventDefault();writing.focus({preventScroll:true});ensureBlankLineCaret(e.clientX,e.clientY);
+});
+writing.addEventListener("input",()=>{scheduleHistory();save()});
+writing.addEventListener("keydown",e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){
+    e.preventDefault();if(e.shiftKey)redo();else undo();return;
+  }
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();redo();return}
+  if(e.key==="Tab"){e.preventDefault();document.execCommand("insertText",false,"    ");scheduleHistory();save()}
+});
+
+/* Page switching: only navigation creates a new page when explicitly moving forward. */
+function changePage(delta){
+  if(pageAnimating)return;
+  const next=currentPage+delta;
+  if(next<1)return;
+  clearTimeout(historyTimer);commitHistory();saveNow();
+  if(delta<0&&!hasPage(next))return;
+  if(delta>0&&!hasPage(next))book.pages[next]={html:"",drawings:[]};
+  pageAnimating=true;updatePageLabels();
+  const layer=$("turnLayer");
+  layer.className="turn-layer active "+(delta>0?"forward":"backward");
+  setTimeout(()=>{
+    currentPage=next;
+    layer.className="turn-layer";pageAnimating=false;
+    loadPage();updatePageLabels();
+  },820);
+}
+function jumpToPage(n){
+  if(!Number.isSafeInteger(n)||n<1||!hasPage(n)){
+    $("jumpError").textContent="Page does not exist.";
+    $("jumpError").hidden=false;return false;
+  }
+  clearTimeout(historyTimer);commitHistory();saveNow();
+  currentPage=n;loadPage();$("jumpDialog").hidden=true;$("jumpError").hidden=true;
+  notify("Opened page "+n);return true;
+}
+$("jumpBtn").onclick=()=>{
+  $("jumpNumber").value=String(currentPage);
+  $("jumpError").hidden=true;$("jumpDialog").hidden=false;
+  $("jumpNumber").focus();
+};
+$("jumpForm").addEventListener("submit",e=>{
+  e.preventDefault();const raw=$("jumpNumber").value.trim();
+  if(!/^[1-9]\d*$/.test(raw)){ $("jumpError").textContent="Enter a valid page number."; $("jumpError").hidden=false;return }
+  jumpToPage(Number(raw));
+});
+$("cancelJump").onclick=()=>$("jumpDialog").hidden=true;
+
+/* Page management: insertion shifts later page numbers; duplication copies both content and drawings. */
+function renumberPagesForInsert(at){
+  const updated={};
+  Object.keys(book.pages).map(Number).sort((a,b)=>b-a).forEach(n=>{
+    updated[n>=at?n+1:n]=book.pages[n];
+  });
+  book.pages=updated;
+}
+$("insertPage").onclick=()=>{
+  clearTimeout(historyTimer);commitHistory();saveNow();
+  const at=currentPage+1;
+  renumberPagesForInsert(at);
+  book.pages[at]={html:"",drawings:[]};
+  currentPage=at;loadPage();notify("Page inserted");
+};
+$("duplicatePage").onclick=()=>{
+  clearTimeout(historyTimer);commitHistory();saveNow();
+  const copy=clone(page()),at=currentPage+1;
+  renumberPagesForInsert(at);
+  book.pages[at]=copy;currentPage=at;loadPage();notify("Page duplicated");
+};
+$("clearPage").onclick=()=>{
+  if(!confirm("Clear all typed text and drawings on page "+currentPage+"? This cannot be undone after you leave this page."))return;
+  commitHistory();
+  page().html="";page().drawings=[];
+  writing.innerHTML="";commitHistory();redraw();saveNow();updateHistoryButtons();
+  notify("Page cleared");
+};
+
+/* Bookmarks */
+function cleanBookmarks(){
+  if(!Array.isArray(book.bookmarks))book.bookmarks=[];
+  book.bookmarks=[...new Set(book.bookmarks.map(Number).filter(n=>Number.isSafeInteger(n)&&n>0&&hasPage(n)))].sort((a,b)=>a-b);
+}
+function toggleBookmark(){
+  cleanBookmarks();
+  const i=book.bookmarks.indexOf(currentPage);
+  if(i>=0){book.bookmarks.splice(i,1);notify("Bookmark removed")}
+  else{book.bookmarks.push(currentPage);book.bookmarks.sort((a,b)=>a-b);notify("Page bookmarked")}
+  save();updateBookmarkButton();
+}
+function updateBookmarkButton(){
+  cleanBookmarks();
+  $("bookmarkBtn").textContent=book.bookmarks.includes(currentPage)?"★ Bookmarked":"☆ Bookmark";
+}
+function renderBookmarks(){
+  cleanBookmarks();const list=$("bookmarkList");list.innerHTML="";
+  $("noBookmarks").hidden=book.bookmarks.length>0;
+  book.bookmarks.forEach(n=>{
+    const row=document.createElement("div");row.className="bookmark-entry";
+    const go=document.createElement("button");go.textContent="⚑ Page "+n;go.onclick=()=>{jumpToPage(n)};
+    const remove=document.createElement("button");remove.textContent="×";remove.className="remove-bookmark";remove.title="Remove bookmark";
+    remove.onclick=()=>{book.bookmarks=book.bookmarks.filter(x=>x!==n);save();renderBookmarks();updateBookmarkButton()};
+    row.append(go,remove);list.appendChild(row);
+  });
+}
+$("bookmarkBtn").onclick=toggleBookmark;
+$("bookmarksBtn").onclick=()=>{renderBookmarks();$("bookmarksDialog").hidden=false};
+$("closeBookmarks").onclick=()=>$("bookmarksDialog").hidden=true;
+
+/* Drawing tools. History records completed drawing actions. */
+function point(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+canvas.addEventListener("pointerdown",e=>{
+  if(mode!=="draw"||pageAnimating)return;
+  e.preventDefault();
+  try{canvas.setPointerCapture(e.pointerId)}catch(_){}
+  activePointer=e.pointerId;drawingNow=true;start=point(e);
+  shapes().push({tool,size:Number($("drawSize").value),color:$("drawColor").value,points:[start],start,end:start});
+  redraw();
+});
+canvas.addEventListener("pointermove",e=>{
+  if(!drawingNow||e.pointerId!==activePointer)return;
+  e.preventDefault();const p=point(e),s=shapes()[shapes().length-1];if(!s)return;
+  if(tool==="pen"||tool==="eraser")s.points.push(p);else s.end=p;
+  redraw();
+});
+function endDrawing(e){
+  if(!drawingNow||e.pointerId!==activePointer)return;
+  const s=shapes()[shapes().length-1];
+  if(s&&tool!=="pen"&&tool!=="eraser")s.end=point(e);
+  drawingNow=false;activePointer=null;start=null;
+  redraw();commitHistory();save();
+}
+canvas.addEventListener("pointerup",endDrawing);
+canvas.addEventListener("pointercancel",endDrawing);
+
+document.querySelectorAll("[data-tool]").forEach(b=>{
+  b.onclick=()=>{
+    tool=b.dataset.tool;
+    document.querySelectorAll("[data-tool]").forEach(x=>x.classList.toggle("active",x===b));
+  };
+});
+$("undo").onclick=undo;$("redo").onclick=redo;
+$("clear").onclick=()=>{
+  if(!shapes().length)return;
+  if(confirm("Clear all drawings on this page?")){
+    page().drawings=[];redraw();commitHistory();save();
+  }
+};
+$("done").onclick=()=>setMode("type");
+$("typeMode").onclick=()=>setMode("type");
+$("drawMode").onclick=()=>setMode("draw");
+$("prev").onclick=()=>changePage(-1);
+$("next").onclick=()=>changePage(1);
+
+function setMode(next){
+  mode=next;const drawing=mode==="draw";
+  writing.contentEditable=String(!drawing);
+  writing.style.pointerEvents=drawing?"none":"auto";
+  canvas.style.pointerEvents=drawing?"auto":"none";
+  $("toolbar").hidden=!drawing;
+  $("typeMode").classList.toggle("active",!drawing);
+  $("drawMode").classList.toggle("active",drawing);
+  $("help").textContent=drawing
+    ?"Choose a tool and drag on the paper · Undo and redo include drawings"
+    :"Tap where you want to write · Text and drawings save automatically";
+  save();
+}
+
+/* Cover and first-time setup */
+$("openBook").onclick=()=>{
+  $("cover").classList.add("opened");
+  setTimeout(()=>writing.focus({preventScroll:true}),500);
+};
+function applyWelcome(){
+  book.title=$("welcomeTitle").value.trim()||"The Old Book";
+  book.owner=$("welcomeOwner").value.trim();
+  book.leather=$("welcomeLeather").value;
+  $("bookTitle").value=book.title;$("owner").value=book.owner;$("leather").value=book.leather;
+  applyAppearance();updateCover();saveNow();$("welcome").hidden=true;
+}
+$("createBook").onclick=applyWelcome;
+$("skipWelcome").onclick=()=>$("welcome").hidden=true;
+$("bookTitle").oninput=e=>{book.title=e.target.value;updateCover();save()};
+$("owner").oninput=e=>{book.owner=e.target.value;updateCover();save()};
+function bindColor(id,key){$(id).oninput=e=>{book[key]=e.target.value;applyAppearance();save()}}
+bindColor("leather","leather");bindColor("paperColor","paper");bindColor("ruleColor","rule");bindColor("marginColor","margin");
+$("spacing").oninput=e=>{book.spacing=Number(e.target.value);applyAppearance();save()};
+$("paperStyle").onchange=e=>{book.paperStyle=e.target.value;applyAppearance();save()};
+
+/* Full screen */
+async function toggleFullscreen(){
+  const entering=!document.body.classList.contains("focus-mode");
+  if(entering){
+    document.body.classList.add("focus-mode");
+    try{
+      if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();
+      else focusFallback=true;
+    }catch(_){focusFallback=true}
+    $("fullscreenBtn").textContent="⛶ Exit full screen";
+  }else{
+    document.body.classList.remove("focus-mode");
+    if(document.fullscreenElement&&document.exitFullscreen){try{await document.exitFullscreen()}catch(_){}}
+    focusFallback=false;$("fullscreenBtn").textContent="⛶ Full screen";
+  }
+  setTimeout(resizeCanvas,150);
+}
+$("fullscreenBtn").onclick=toggleFullscreen;
+$("exitFocus").onclick=toggleFullscreen;
+document.addEventListener("fullscreenchange",()=>{
+  if(!document.fullscreenElement&&document.body.classList.contains("focus-mode")){
+    document.body.classList.remove("focus-mode");
+    $("fullscreenBtn").textContent="⛶ Full screen";setTimeout(resizeCanvas,150);
+  }
+});
+
+/* Settings modal */
+$("settingsBtn").onclick=()=>{
+  $("modalTitle").value=book.title;$("modalOwner").value=book.owner;
+  $("modalLeather").value=book.leather;$("modalPaper").value=book.paper;$("modalRule").value=book.rule;
+  $("customize").hidden=false;
+};
+$("closeCustomize").onclick=()=>$("customize").hidden=true;
+$("applyCustomize").onclick=()=>{
+  book.title=$("modalTitle").value.trim()||"The Old Book";
+  book.owner=$("modalOwner").value.trim();book.leather=$("modalLeather").value;
+  book.paper=$("modalPaper").value;book.rule=$("modalRule").value;
+  $("bookTitle").value=book.title;$("owner").value=book.owner;$("leather").value=book.leather;
+  $("paperColor").value=book.paper;$("ruleColor").value=book.rule;
+  applyAppearance();updateCover();save();$("customize").hidden=true;
+};
+
+/* Export text and full-book backup */
+function download(name,content,type){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");
+  a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+$("exportText").onclick=()=>{
+  saveNow();
+  const output=Object.keys(book.pages).map(Number).sort((a,b)=>a-b).map(n=>{
+    const d=document.createElement("div");d.innerHTML=book.pages[n].html||"";
+    return"PAGE "+n+"\n"+d.innerText;
+  }).join("\n\n------------------------\n\n");
+  download("exercise-book.txt",output,"text/plain");
+};
+$("backup").onclick=()=>{
+  flushBeforeLeaving();
+  try{
+    download("exercise-book-backup.json",JSON.stringify(book,null,2),"application/json");
+    notify("Backup exported");
+  }catch(_){notify("Backup failed")}
+};
+$("restore").onclick=()=>$("restoreFile").click();
+$("restoreFile").onchange=e=>{
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const restored=JSON.parse(reader.result);
+      if(!restored.pages||typeof restored.pages!=="object")throw Error("Invalid backup");
+      const normalizedPages={};
+      Object.keys(restored.pages).forEach(k=>{
+        const n=Number(k);if(Number.isSafeInteger(n)&&n>0)normalizedPages[n]=normalizePage(restored.pages[k]);
+      });
+      if(!Object.keys(normalizedPages).length)normalizedPages[1]={html:"",drawings:[]};
+      book={...clone(defaults),...restored,pages:normalizedPages};
+      if(!Array.isArray(book.bookmarks))book.bookmarks=[];
+      currentPage=Math.max(1,Number(book.currentPage)||1);
+      if(!hasPage(currentPage))currentPage=Number(Object.keys(book.pages).sort((a,b)=>Number(a)-Number(b))[0]);
+      historyByPage={};applyAppearance();updateCover();
+      $("bookTitle").value=book.title;$("owner").value=book.owner;
+      $("leather").value=book.leather;$("paperColor").value=book.paper;
+      $("ruleColor").value=book.rule;$("marginColor").value=book.margin;
+      $("spacing").value=book.spacing;$("paperStyle").value=book.paperStyle;
+      loadPage();setMode(book.mode||"type");saveNow();updateBookmarkButton();
+      notify("Backup restored");
+    }catch(_){alert("This backup could not be opened.")}
+    e.target.value="";
+  };
+  reader.readAsText(file);
+};
+
+/* Swipe left or right to turn pages. */
+paper.addEventListener("touchstart",e=>{
+  if(mode==="draw")return;const t=e.changedTouches[0];touchX=t.clientX;touchY=t.clientY;
+},{passive:true});
+paper.addEventListener("touchend",e=>{
+  if(touchX===null||mode==="draw")return;
+  const t=e.changedTouches[0],dx=t.clientX-touchX,dy=t.clientY-touchY;
+  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.4)changePage(dx<0?1:-1);
+  touchX=null;touchY=null;
+},{passive:true});
+
+window.addEventListener("resize",resizeCanvas);
+window.addEventListener("blur",()=>{clearTimeout(historyTimer);commitHistory();saveNow()});
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="hidden"){clearTimeout(historyTimer);commitHistory();saveNow()}
+});
+window.addEventListener("pagehide",flushBeforeLeaving);
+window.addEventListener("beforeunload",flushBeforeLeaving);
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    ["customize","jumpDialog","bookmarksDialog"].forEach(id=>$(id).hidden=true);
+  }
+});
+
+/* Restore saved notebook. Try recovery copy if the main record is unavailable. */
+try{
+  let raw=localStorage.getItem(KEY);
+  if(!raw){
+    const recovery=localStorage.getItem(RECOVERY_KEY);
+    if(recovery){
+      raw=recovery;
+      setStatus("Recovered saved copy");
+    }
+  }
+  if(raw){
+    const parsed=JSON.parse(raw);
+    if(parsed.pages&&typeof parsed.pages==="object"){
+      const normalizedPages={};
+      Object.keys(parsed.pages).forEach(k=>{
+        const n=Number(k);if(Number.isSafeInteger(n)&&n>0)normalizedPages[n]=normalizePage(parsed.pages[k]);
+      });
+      book={...clone(defaults),...parsed,pages:Object.keys(normalizedPages).length?normalizedPages:{"1":{html:"",drawings:[]}}};
+      if(!Array.isArray(book.bookmarks))book.bookmarks=[];
+      currentPage=Math.max(1,Number(book.currentPage)||1);
+      if(!hasPage(currentPage))currentPage=Number(Object.keys(book.pages).sort((a,b)=>Number(a)-Number(b))[0]);
+      $("welcome").hidden=true;
+    }
+  }
+  $("bookTitle").value=book.title;$("owner").value=book.owner;
+  $("leather").value=book.leather;$("paperColor").value=book.paper;
+  $("ruleColor").value=book.rule;$("marginColor").value=book.margin;
+  $("spacing").value=book.spacing;$("paperStyle").value=book.paperStyle;
+  applyAppearance();updateCover();loadPage();setMode(book.mode||"type");
+  cleanBookmarks();updateBookmarkButton();checkStorage();
+}catch(e){
+  console.error("Could not load notebook",e);
+  setStatus("Could not load saved book");
+}
+})();
+</script>
+</body>
+</html>
+
+
+Do not omit sections of the supplied source code. Do not replace it with a simplified example.
+
+Now begin by inspecting the source and creating the actual Android project.
